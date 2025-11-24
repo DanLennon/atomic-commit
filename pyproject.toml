@@ -1,0 +1,9 @@
+[project]
+name = "commit_score"
+version = "0.0.1"
+
+dependencies = [
+    "ruff>=0.13.0",
+]
+requires-python = ">=3.12"
+readme = "README.md"
