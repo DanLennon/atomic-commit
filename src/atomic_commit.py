@@ -1,7 +1,4 @@
 import subprocess
-import sys
-import time
-import argparse
 from datetime import datetime, timezone
 
 
@@ -17,7 +14,6 @@ def in_git_repo():
 
 
 def get_last_commit_time():
-    """Get time since last commit in human readable format"""
     result = subprocess.run(
         ["git", "log", "-1", "--format=%ct"],
         stdout=subprocess.PIPE,
@@ -51,8 +47,6 @@ def get_last_commit_time():
 
 
 def count_lines():
-    # ...  your existing count_lines function ...
-    # (keeping the same logic as before)
     diff_result = subprocess.run(
         ["git", "diff", "--unified=0"],
         stdout=subprocess.PIPE,
@@ -109,7 +103,6 @@ def emoji(size, time_since=None):
     if size is None:
         return ""
 
-    # Choose emoji based on size
     if size < 20:
         emoji_part = f"🟩 {size}"
     elif size < 100:
@@ -117,7 +110,6 @@ def emoji(size, time_since=None):
     else:
         emoji_part = f"🟥 {size}"
 
-    # Add time since last commit
     if time_since:
         return f"{emoji_part} ⏰{time_since}"
     else:
@@ -130,52 +122,13 @@ def run_once():
         return
 
     lines = count_lines()
-    time_since = get_last_commit_time()
-    # Only print if there are changes
     if lines > 0:
         time_since = get_last_commit_time()
         print(emoji(lines, time_since), end="")
 
 
-def run_monitor():
-    """Continuous monitoring mode"""
-    if not in_git_repo():
-        print("Not in a git repository")
-        return
-
-    last_status = None
-
-    try:
-        while True:
-            lines = count_lines()
-            time_since = get_last_commit_time()
-            current_status = emoji(lines, time_since)
-
-            if current_status != last_status:
-                sys.stdout.write("\r\033[K")
-                sys.stdout.write(current_status)
-                sys.stdout.flush()
-                last_status = current_status
-
-            time.sleep(0.5)
-    except KeyboardInterrupt:
-        print("\nExiting...")
-        sys.exit(0)
-
-
 def run():
-    """Main entry point"""
-    parser = argparse.ArgumentParser(description="Atomic commit change counter")
-    parser.add_argument(
-        "--monitor", "-m", action="store_true", help="Run in continuous monitoring mode"
-    )
-
-    args = parser.parse_args()
-
-    if args.monitor:
-        run_monitor()
-    else:
-        run_once()
+    run_once()
 
 
 if __name__ == "__main__":
