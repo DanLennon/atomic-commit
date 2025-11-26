@@ -131,7 +131,10 @@ def run_once():
 
     lines = count_lines()
     time_since = get_last_commit_time()
-    print(emoji(lines, time_since), end="")
+    # Only print if there are changes
+    if lines > 0:
+        time_since = get_last_commit_time()
+        print(emoji(lines, time_since), end="")
 
 
 def run_monitor():
